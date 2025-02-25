@@ -2,19 +2,17 @@
   <div class="edit-user">
     <AppNavbar />
     <div class="container">
-      <h1>{{ isEditMode ? "Edit User" : "Create User" }}</h1>
+      <h1>Create New User</h1>
       <form @submit.prevent="saveUser">
         <div class="form-group">
           <label for="username">Username:</label>
           <input type="text" id="username" v-model="user.username" class="form-control" required>
         </div>
-
         <div class="form-group">
           <label for="email">Email:</label>
           <input type="email" id="email" v-model="user.email" class="form-control" required>
           <p v-if="errors.email" class="text-danger">{{ errors.email }}</p> <!-- ✅ Display email error -->
         </div>
-
         <div class="form-group">
           <label for="role">Role:</label>
           <select id="role" v-model="user.role" class="form-control" required>
@@ -22,11 +20,9 @@
             <option value="employee">Employee</option>
           </select>
         </div>
-
-        <button type="submit" class="btn btn-primary">{{ isEditMode ? "Save Changes" : "Create User" }}</button>
+        <button type="submit" class="btn btn-primary">Create User</button>
         <router-link to="/" class="btn btn-secondary ml-2">Cancel</router-link>
       </form>
-
       <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
     </div>
   </div>
@@ -38,58 +34,37 @@ import userController from '../../api/userController';
 
 export default {
   name: 'EditUser',
-  props: ['id'], // The id will be null for create mode
   components: { AppNavbar },
   data() {
     return {
       user: { username: '', email: '', role: 'employee' },
-      errors: {}, // ✅ Stores validation errors
+      errors: {},
       errorMessage: ''
     };
   },
-  computed: {
-    isEditMode() {
-      return !!this.id; // Returns true if editing, false if creating
-    }
-  },
   async created() {
-    if (this.isEditMode) {
-      try {
-        this.user = await userController.getUserById(this.id);
-      } catch (error) {
-        this.errorMessage = 'Error loading user details.';
-        console.error(error);
-      }
-    }
+    // No need for fetching data here as this is for user creation
   },
   methods: {
     async saveUser() {
-  try {
-    if (this.isEditMode) {
-      // In edit mode, we do not check the email for duplicates
-      await userController.updateUser(this.user.id, this.user);
-    } else {
-      // In create mode, we check for duplicate emails
-      const users = await userController.getUsers();
-      const duplicate = users.find(u => u.email.toLowerCase() === this.user.email.toLowerCase() && u.id !== this.id);
+      try {
+        // Check if email already exists
+        const users = await userController.getUsers();
+        const duplicate = users.find(u => u.email.toLowerCase() === this.user.email.toLowerCase());
 
-      if (duplicate) {
-        this.errors.email = "This email is already in use!";
-        return;
-      } else {
-        this.errors.email = ""; // Clear error if email is unique
+        if (duplicate) {
+          this.errors.email = "This email is already in use!";
+          return;
+        }
+
+        this.errors.email = "";
+        await userController.createUser(this.user);
+        this.$router.push('/'); // Redirect after creation
+      } catch (error) {
+        console.error('Error creating user:', error);
+        this.errorMessage = 'Failed to create user. Please try again.';
       }
-
-      await userController.createUser(this.user);
     }
-
-    this.$router.push('/');
-  } catch (error) {
-    console.error('Error saving user:', error);
-    this.errorMessage = 'Failed to save user. Please try again.';
-  }
-}
-
   }
 };
 </script>

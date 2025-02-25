@@ -7,7 +7,13 @@
       <form @submit.prevent="saveDepartment">
         <div class="form-group">
           <label for="name">Department Name</label>
-          <input type="text" id="name" class="form-control" v-model="department.name" required>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            v-model="department.name"
+            required
+          />
         </div>
 
         <div class="form-group">
@@ -21,33 +27,40 @@
 
         <div class="form-group">
           <label for="employees">Number of Employees</label>
-          <input type="number" id="employees" class="form-control" v-model="department.num_employees" required>
+          <input
+            type="number"
+            id="employees"
+            class="form-control"
+            v-model="department.num_employees"
+            required
+          />
         </div>
 
-        <button type="submit" class="btn btn-primary">{{ isNew ? "Create" : "Update" }}</button>
+        <button type="submit" class="btn btn-primary">
+          {{ isNew ? "Create" : "Update" }}
+        </button>
         <router-link to="/departments" class="btn btn-secondary">Cancel</router-link>
       </form>
+
+      <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
 
 <script>
-import AppNavbar from '../components/AppNavbar.vue';
-import departmentController from '../api/departmentController';
-import companyController from '../api/companyController';
+import AppNavbar from "../components/AppNavbar.vue";
+import departmentController from "../api/departmentController";
+import companyController from "../api/companyController";
 
 export default {
-  name: 'EditDepartment',
-  props: ['id'],
+  name: "EditDepartment",
+  props: ["id"],
   data() {
     return {
       isNew: !this.id, // ✅ Determines if it's create mode
-      department: {
-        name: '',
-        company: null,
-        num_employees: 0
-      },
-      companies: []
+      department: { name: "", company: null, num_employees: 0 },
+      companies: [],
+      errorMessage: "",
     };
   },
   async created() {
@@ -58,31 +71,48 @@ export default {
         this.department = await departmentController.getDepartmentById(this.id);
       }
     } catch (error) {
-      console.error("Error loading department data:", error);
+      this.errorMessage = "Error loading department data.";
+      console.error(error);
     }
   },
   methods: {
     async saveDepartment() {
       try {
+        // ✅ Fetch all departments
+        const existingDepartments = await departmentController.getAllDepartments();
+
+        // ✅ Check for duplicate department name within the same company
+        const duplicate = existingDepartments.find(
+          (d) =>
+            d.name.toLowerCase() === this.department.name.toLowerCase() &&
+            d.company === this.department.company &&
+            d.id !== this.id
+        );
+
+        if (duplicate) {
+          this.errorMessage = "A department with this name already exists in this company!";
+          return;
+        }
+
         if (this.isNew) {
           await departmentController.createDepartment(this.department);
         } else {
           await departmentController.updateDepartment(this.id, this.department);
         }
-        this.$router.push('/departments'); // ✅ Redirect after saving
+
+        this.$router.push("/departments");
       } catch (error) {
-        console.error("Error saving department:", error);
+        this.errorMessage = "Error saving department. Please try again.";
+        console.error(error);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-    
-  <style scoped>
-  .container {
-    max-width: 600px;
-    margin-top: 20px;
-  }
-  </style>
-  
+<style scoped>
+.container {
+  max-width: 600px;
+  margin-top: 20px;
+}
+</style>

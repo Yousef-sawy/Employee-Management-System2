@@ -1,7 +1,7 @@
 <template>
   <div class="department-list">
     <AppNavbar />
-    <h1>Department List</h1>
+    <h1> List of Departments</h1>
 
     <!-- ✅ Create Department Button -->
     <div class="container mb-3">
@@ -17,7 +17,8 @@
             <div class="card mb-4 box-shadow">
               <div class="card-body">
                 <h4 class="text-secondary">{{ department.name }}</h4>
-                <p class="card-text"><strong>Company:</strong> {{ department.company.name }}</p>
+                
+                <p class="card-text"><strong>In Company:</strong> {{ department.company_name }}</p>
                 <p class="card-text"><strong>Employees:</strong> {{ department.num_employees }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">

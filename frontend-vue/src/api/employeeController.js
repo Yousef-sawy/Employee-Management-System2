@@ -66,6 +66,17 @@ export default {
       return null;
     }
   },
+  async getEmployeeCountByCompany(companyId) {
+    try {
+      const response = await fetch(`/api/employees/company/${companyId}/count`);
+      const data = await response.json();
+      return data.count;
+    } catch (error) {
+      console.error("Error fetching employee count:", error);
+      throw error;
+    }
+  }
+,  
 
   async deleteEmployee(id) {
     try {

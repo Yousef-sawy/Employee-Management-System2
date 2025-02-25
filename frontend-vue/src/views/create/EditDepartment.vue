@@ -57,7 +57,7 @@ export default {
   props: ["id"],
   data() {
     return {
-      isNew: !this.id, // ✅ Determines if it's create mode
+      isNew: !this.id, // Determines if it's create mode
       department: { name: "", company: null, num_employees: 0 },
       companies: [],
       errorMessage: "",
@@ -78,10 +78,10 @@ export default {
   methods: {
     async saveDepartment() {
       try {
-        // ✅ Fetch all departments
+        // Fetch all departments
         const existingDepartments = await departmentController.getDepartments();
 
-        // ✅ Check for duplicate department name within the same company
+        // Check for duplicate department name within the same company
         const duplicate = existingDepartments.find(
           (d) =>
             d.name.toLowerCase() === this.department.name.toLowerCase() &&

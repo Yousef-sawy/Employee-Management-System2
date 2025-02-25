@@ -23,7 +23,9 @@
             id="num_departments"
             v-model="company.num_departments"
             class="form-control"
-            disabled
+            :readonly="isEditMode"
+            :style="isEditMode ? { backgroundColor: '#e0e0e0' } : {}"
+            required
           />
         </div>
 

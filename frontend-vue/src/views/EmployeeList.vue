@@ -3,14 +3,14 @@
     <AppNavbar />
     <div class="container">
       <h1>Employee List</h1>
-      
+
       <!-- Create Employee Button -->
       <div class="mb-3 text-right">
         <router-link :to="{ name: 'create-employee' }" class="btn btn-success">
           Create Employee
         </router-link>
       </div>
-      
+
       <div class="album py-5 bg-light">
         <div class="container">
           <div class="row">
@@ -34,8 +34,7 @@
                       <button @click="viewEmployee(employee.id)" class="btn btn-sm btn-outline-primary">
                         View
                       </button>
-                      <router-link
-                        :to="{ name: 'edit-employee', params: { id: employee.id } }"
+                      <router-link :to="{ name: 'edit-employee', params: { id: employee.id } }"
                         class="btn btn-sm btn-outline-secondary">
                         Edit
                       </router-link>
@@ -53,7 +52,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Modal for Viewing Employee Details -->
       <div v-if="selectedEmployee" class="modal fade show d-block" tabindex="-1" role="dialog">
         <div class="modal-dialog">

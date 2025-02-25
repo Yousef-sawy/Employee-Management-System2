@@ -1,0 +1,4 @@
+http://127.0.0.1:8000/api/users/ (for users)
+http://127.0.0.1:8000/api/companies/ (for companies)
+http://127.0.0.1:8000/api/departments/ (for departments)
+http://127.0.0.1:8000/api/employees/ (for employees)

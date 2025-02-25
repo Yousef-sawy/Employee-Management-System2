@@ -12,6 +12,7 @@
         <div class="form-group">
           <label for="email">Email:</label>
           <input type="email" id="email" v-model="user.email" class="form-control" required>
+          <p v-if="errors.email" class="text-danger">{{ errors.email }}</p> <!-- ✅ Display email error -->
         </div>
 
         <div class="form-group">
@@ -41,7 +42,8 @@ export default {
   components: { AppNavbar },
   data() {
     return {
-      user: { username: '', email: '', role: 'user' },
+      user: { username: '', email: '', role: 'employee' },
+      errors: {}, // ✅ Stores validation errors
       errorMessage: ''
     };
   },
@@ -62,18 +64,30 @@ export default {
   },
   methods: {
     async saveUser() {
-  try {
-    if (this.user.id) {
-      await userController.updateUser(this.user.id, this.user);
-    } else {
-      await userController.createUser(this.user);
-    }
-    this.$router.push('/');
-  } catch (error) {
-    console.error('Error saving user:', error);
-  }
-}
+      try {
+        // ✅ Fetch all users to check for duplicate emails
+        const users = await userController.getAllUsers();
+        const duplicate = users.find(u => u.email.toLowerCase() === this.user.email.toLowerCase() && u.id !== this.id);
 
+        if (duplicate) {
+          this.errors.email = "This email is already in use!";
+          return;
+        } else {
+          this.errors.email = ""; // ✅ Clear error if email is unique
+        }
+
+        if (this.isEditMode) {
+          await userController.updateUser(this.user.id, this.user);
+        } else {
+          await userController.createUser(this.user);
+        }
+
+        this.$router.push('/');
+      } catch (error) {
+        console.error('Error saving user:', error);
+        this.errorMessage = 'Failed to save user. Please try again.';
+      }
+    }
   }
 };
 </script>
@@ -83,7 +97,7 @@ export default {
   max-width: 600px;
   margin-top: 20px;
 }
+.text-danger {
+  color: red;
+}
 </style>
-
-
-

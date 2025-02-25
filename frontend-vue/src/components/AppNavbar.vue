@@ -3,7 +3,7 @@
         <nav class="navbar navbar-light bg-light">
             <div class="container mw-0 px-3 d-flex justify-content-between align-items-center">
                 
-                <a class="navbar-brand">Navbar</a>
+                
 
                 <ul class="navbar-nav d-flex flex-row">
                     <li class="nav-item mx-3">

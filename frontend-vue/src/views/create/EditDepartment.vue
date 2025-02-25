@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import AppNavbar from "../components/AppNavbar.vue";
-import departmentController from "../api/departmentController";
-import companyController from "../api/companyController";
+import AppNavbar from "../../components/AppNavbar.vue";
+import departmentController from "../../api/departmentController";
+import companyController from "../../api/companyController";
 
 export default {
   name: "EditDepartment",
@@ -79,7 +79,7 @@ export default {
     async saveDepartment() {
       try {
         // ✅ Fetch all departments
-        const existingDepartments = await departmentController.getAllDepartments();
+        const existingDepartments = await departmentController.getDepartments();
 
         // ✅ Check for duplicate department name within the same company
         const duplicate = existingDepartments.find(

@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import AppNavbar from "../components/AppNavbar.vue";
-import companyController from "../api/companyController";
+import AppNavbar from "../../components/AppNavbar.vue";
+import companyController from "../../api/companyController";
 
 export default {
   name: "EditCompany",
@@ -81,7 +81,7 @@ export default {
     async saveCompany() {
       try {
         // Check for duplicate company name
-        const existingCompanies = await companyController.getAllCompanies();
+        const existingCompanies = await companyController.getCompanies();
         const duplicate = existingCompanies.find(
           (c) => c.name.toLowerCase() === this.company.name.toLowerCase() && c.id !== this.id
         );

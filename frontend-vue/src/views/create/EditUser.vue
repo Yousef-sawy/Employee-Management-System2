@@ -12,7 +12,7 @@
         <div class="form-group">
           <label for="email">Email:</label>
           <input type="email" id="email" v-model="user.email" class="form-control" required>
-          <p v-if="errors.email" class="text-danger">{{ errors.email }}</p> <!-- ✅ Display email error -->
+          <p v-if="errors.email" class="text-danger">{{ errors.email }}</p> <!-- ✅ Show email error -->
         </div>
 
         <div class="form-group">
@@ -23,7 +23,9 @@
           </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">{{ isEditMode ? "Save Changes" : "Create User" }}</button>
+        <button type="submit" class="btn btn-primary">
+          {{ isEditMode ? "Save Changes" : "Create User" }}
+        </button>
         <router-link to="/" class="btn btn-secondary ml-2">Cancel</router-link>
       </form>
 
@@ -33,12 +35,12 @@
 </template>
 
 <script>
-import AppNavbar from '../components/AppNavbar.vue';
-import userController from '../api/userController';
+import AppNavbar from '../../components/AppNavbar.vue';
+import userController from '../../api/userController';
 
 export default {
   name: 'EditUser',
-  props: ['id'], // The id will be null for create mode
+  props: ['id'],
   components: { AppNavbar },
   data() {
     return {
@@ -49,7 +51,7 @@ export default {
   },
   computed: {
     isEditMode() {
-      return !!this.id; // Returns true if editing, false if creating
+      return !!this.id;
     }
   },
   async created() {
@@ -66,14 +68,16 @@ export default {
     async saveUser() {
       try {
         // ✅ Fetch all users to check for duplicate emails
-        const users = await userController.getAllUsers();
-        const duplicate = users.find(u => u.email.toLowerCase() === this.user.email.toLowerCase() && u.id !== this.id);
+        const users = await userController.getUsers(); // 🔥 Fixed function name
+        const duplicate = users.find(
+          u => u.email.toLowerCase() === this.user.email.toLowerCase() && u.id !== this.id
+        );
 
         if (duplicate) {
           this.errors.email = "This email is already in use!";
           return;
         } else {
-          this.errors.email = ""; // ✅ Clear error if email is unique
+          this.errors.email = "";
         }
 
         if (this.isEditMode) {

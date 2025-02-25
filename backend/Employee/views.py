@@ -3,9 +3,5 @@ from .models import Employee
 from .serializers import EmployeeSerializer
 
 class EmployeeViewSet(ModelViewSet):
-    queryset = Employee.objects.all()
+    queryset = Employee.objects.select_related('company', 'department', 'user').all()
     serializer_class = EmployeeSerializer
-
-    def perform_update(self, serializer):
-        instance = serializer.save()
-        instance.update_days_employed()

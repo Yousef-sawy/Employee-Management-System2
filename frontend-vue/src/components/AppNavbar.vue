@@ -15,6 +15,9 @@
                     <li class="nav-item">
                         <router-link :to="{ name: 'departments' }" class="nav-link">Departments</router-link>
                     </li>
+                    <li class="nav-item">
+                        <router-link :to="{ name: 'employees' }" class="nav-link">Employees</router-link>
+                    </li>
                 </ul>
 
                 <form class="form-inline d-flex">

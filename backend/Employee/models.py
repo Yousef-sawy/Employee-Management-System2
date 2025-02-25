@@ -28,6 +28,8 @@ class Employee(models.Model):
     address = models.TextField()
     designation = models.CharField(max_length=255)
     hired_on = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)  # Auto-set on creation
+    updated_at = models.DateTimeField(auto_now=True)      # Auto-updated on save
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.designation}"

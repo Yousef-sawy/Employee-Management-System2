@@ -1,24 +1,37 @@
 from rest_framework import serializers
 from .models import Employee
-from Users.models import User  # Import User model
+from Users.models import User
+from Company.models import Company
+from Departments.models import Department
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(source="user.first_name", read_only=True)
-    last_name = serializers.CharField(source="user.last_name", read_only=True)
+    username = serializers.CharField(source="user.username", read_only=True)
     email = serializers.EmailField(source="user.email", read_only=True)
-    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)  # Accept user_id
+    user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
+    position_title = serializers.CharField(source="designation")
+    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), write_only=True)
+    company_name = serializers.CharField(source="company.name", read_only=True)
+    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all(), write_only=True)
+    department_name = serializers.CharField(source="department.name", read_only=True)
 
     class Meta:
         model = Employee
         fields = [
-            'id', 'user_id', 'company', 'department', 'status', 
-            'first_name', 'last_name', 'email', 'mobile', 
-            'address', 'designation', 'hired_on', 'days_employed'
+            'id', 'user_id', 'company', 'company_name',
+            'department', 'department_name', 'status',
+            'username', 'email', 'mobile', 'address',
+            'position_title', 'hired_on', 'days_employed'
         ]
-
+    
     def create(self, validated_data):
-        user = validated_data.pop('user_id', None)  # Get user from request
+        user = validated_data.pop('user_id', None)
         if not user:
             raise serializers.ValidationError({"user_id": "This field is required."})
+        if Employee.objects.filter(user=user).exists():
+            raise serializers.ValidationError({"user_id": "An employee for this user already exists."})
         employee = Employee.objects.create(user=user, **validated_data)
         return employee
+
+    def update(self, instance, validated_data):
+        validated_data.pop('user_id', None)
+        return super().update(instance, validated_data)

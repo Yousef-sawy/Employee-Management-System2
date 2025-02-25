@@ -6,6 +6,9 @@ import EditCompany from './views/create/EditCompany.vue'; // ✅ Updated path
 import DepartmentList from './views/DepartmentList.vue';
 import EditDepartment from './views/create/EditDepartment.vue'; // ✅ Updated path
 
+import EmployeeList from './views/EmployeeList.vue';
+import EditEmployee from './views/create/EditEmployee.vue';
+
 const routes = [
     { path: '/', name: 'users', component: UserList },
     { path: '/edit-user/:id', name: 'edit-user', component: EditUser, props: true },
@@ -17,7 +20,11 @@ const routes = [
     
     { path: '/departments', name: 'departments', component: DepartmentList },
     { path: '/edit-department/:id', name: 'edit-department', component: EditDepartment, props: true },
-    { path: '/create-department', name: 'create-department', component: EditDepartment }
+    { path: '/create-department', name: 'create-department', component: EditDepartment },
+
+    { path: '/employees', name: 'employees', component: EmployeeList },
+    { path: '/edit-employee/:id', name: 'edit-employee', component: EditEmployee, props: true },
+    { path: '/create-employee', name: 'create-employee', component: EditEmployee }
 ];
 
 const router = createRouter({

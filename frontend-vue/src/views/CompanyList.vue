@@ -107,11 +107,13 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 .modal-content {
   background: white;
   padding: 20px;
   border-radius: 5px;
 }
+
 .modal-backdrop {
   background: rgba(0, 0, 0, 0.5);
   position: fixed;

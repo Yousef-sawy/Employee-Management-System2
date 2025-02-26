@@ -8,20 +8,36 @@ const employeeController = {
     try {
       let token = store.state.accessToken;
       if (!token) throw new Error("No access token found");
-
+  
       const response = await axios.get(API_BASE_URL, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching employees:", error);
-      if (error.response && error.response.status === 401) {
-        await store.dispatch('refreshToken');
-        return await employeeController.getEmployees();
+  
+      if (response.status === 200) {
+        console.log("Employees fetched successfully:", response.data);
+        return response.data;
+      } else {
+        console.warn("Unexpected response status:", response.status);
+        return [];
       }
+    } catch (error) {
+      console.error("Error fetching employees:", error.response?.data || error.message);
+  
+      // Handle unauthorized access by refreshing the token
+      if (error.response?.status === 401) {
+        try {
+          await store.dispatch("refreshToken");
+          return await employeeController.getEmployees();
+        } catch (refreshError) {
+          console.error("Error refreshing token:", refreshError);
+          return [];
+        }
+      }
+  
       return [];
     }
-  },
+  }
+  ,
 
   async getEmployeeById(id) {
     try {
@@ -42,25 +58,31 @@ const employeeController = {
       const response = await axios.post(API_BASE_URL, employeeData, {
         headers: { Authorization: `Bearer ${token}` },
       });
+  
+      console.log("Employee created successfully:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error creating employee:", error.response?.data || error.message);
       return null;
     }
-  },
+  }
+  
+,
 
-  async updateEmployee(id, employeeData) {
-    try {
-      let token = store.state.accessToken;
-      const response = await axios.put(`${API_BASE_URL}${id}/`, employeeData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error updating employee:", error);
-      return null;
-    }
-  },
+async updateEmployee(id, employeeData) {
+  try {
+    let token = store.state.accessToken;
+    const response = await axios.put(`${API_BASE_URL}${id}/`, employeeData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating employee:", error.response?.data || error.message);
+    alert("Update failed: " + JSON.stringify(error.response?.data)); // Show Django error
+    return null;
+  }
+}
+,
 
   async getEmployeeCountByCompany(companyId) {
     try {

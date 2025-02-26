@@ -8,11 +8,14 @@ class EmployeeSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     email = serializers.EmailField(source="user.email", read_only=True)
     user_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
-    position_title = serializers.CharField(source="designation")
-    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), write_only=True)
+    position_title = serializers.CharField(source="designation", required=True)
+    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects.all(), write_only=True, required=True)
     company_name = serializers.CharField(source="company.name", read_only=True)
-    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all(), write_only=True)
+    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all(), write_only=True, required=True)
     department_name = serializers.CharField(source="department.name", read_only=True)
+    mobile = serializers.CharField(required=True)
+    address = serializers.CharField(required=True, allow_blank=True)
+    hired_on = serializers.DateField(required=False, allow_null=True)
 
     class Meta:
         model = Employee

@@ -1,82 +1,64 @@
-const API_BASE_URL = 'http://127.0.0.1:8000/api/users/';
-
-const fetchOptions = () => ({
-  credentials: 'include',
-  headers: { 
-    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-    'Content-Type': 'application/json'
-  }
-});
+import { getAPI } from '../axios-api';
 
 export default {
-  async getUsers() {
+  async getUsers(token) {
     try {
-      const response = await fetch(API_BASE_URL, fetchOptions());
-      if (!response.ok) throw new Error('Failed to fetch users');
-      return await response.json();
+      const response = await getAPI.get('/api/users/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
     } catch (error) {
       console.error('Error fetching users:', error);
       return [];
     }
   },
 
-  async getUserById(id) {
+  async getUserById(id, token) {
     try {
-      const response = await fetch(`${API_BASE_URL}${id}/`, fetchOptions());
-      if (!response.ok) throw new Error('Failed to fetch user details');
-      return await response.json();
+      const response = await getAPI.get(`/api/users/${id}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
     } catch (error) {
       console.error('Error fetching user details:', error);
       return null;
     }
   },
 
-  async createUser(userData) {  // ✅ Separate function for creating user
+  async createUser(userData, token) {
     try {
-      const response = await fetch(API_BASE_URL, {
-        method: 'POST',
-        body: JSON.stringify(userData),
-        ...fetchOptions()
+      const response = await getAPI.post('/api/users/', userData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!response.ok) throw new Error('Failed to create user');
-      return await response.json();
+      return response.data;
     } catch (error) {
       console.error('Error creating user:', error);
       return null;
     }
   },
 
-  async updateUser(id, userData) {
+  async updateUser(id, userData, token) {
     try {
-      // Remove the email from the userData before sending to the API
       const { email, ...dataWithoutEmail } = userData;
-  
-      const response = await fetch(`${API_BASE_URL}${id}/`, {
-        method: 'PUT',
-        body: JSON.stringify(dataWithoutEmail),
-        ...fetchOptions()
+      const response = await getAPI.put(`/api/users/${id}/`, dataWithoutEmail, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-  
-      if (!response.ok) throw new Error('Failed to update user');
-      return await response.json();
+      return response.data;
     } catch (error) {
       console.error('Error updating user:', error);
       return null;
     }
-  }
-  ,
+  },
 
-  async deleteUser(id) {
+  async deleteUser(id, token) {
     try {
-      const response = await fetch(`${API_BASE_URL}${id}/`, {
-        method: 'DELETE',
-        ...fetchOptions()
+      await getAPI.delete(`/api/users/${id}/`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (!response.ok) throw new Error('Failed to delete user');
       return true;
     } catch (error) {
       console.error('Error deleting user:', error);
       return false;
     }
-  }
+  },
 };

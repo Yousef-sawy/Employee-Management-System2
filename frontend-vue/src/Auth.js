@@ -1,51 +1,48 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import { getAPI } from './axios-api'
+import { createStore } from 'vuex';
+import { getAPI } from './axios-api';
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+const store = createStore({
   state: {
     accessToken: localStorage.getItem('accessToken') || null,
     refreshToken: localStorage.getItem('refreshToken') || null,
   },
   mutations: {
-    updateStorage (state, { access, refresh }) {
-      state.accessToken = access
-      state.refreshToken = refresh
-      localStorage.setItem('accessToken', access)
-      localStorage.setItem('refreshToken', refresh)
+    updateStorage(state, { access, refresh }) {
+      state.accessToken = access;
+      state.refreshToken = refresh;
+      localStorage.setItem('accessToken', access);
+      localStorage.setItem('refreshToken', refresh);
     },
-    destroyToken (state) {
-      state.accessToken = null
-      state.refreshToken = null
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refreshToken')
-    }
-  },
-  getters: {
-    loggedIn (state) {
-      return state.accessToken !== null
-    }
+    destroyToken(state) {
+      state.accessToken = null;
+      state.refreshToken = null;
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+    },
   },
   actions: {
-    userLogin ({ commit }, usercredentials) {
-      return new Promise((resolve, reject) => {
-        getAPI.post('/api/token/', {  // Ensure your Django backend has this route
-          username: usercredentials.username,
-          password: usercredentials.password
-        })
-        .then(response => {
-          commit('updateStorage', { access: response.data.access, refresh: response.data.refresh })
-          resolve()
-        })
-        .catch(err => {
-          reject(err)
-        })
-      })
+    async userLogin({ commit }, usercredentials) {
+      try {
+        const response = await getAPI.post('/api/api-token/', usercredentials);
+        commit('updateStorage', { access: response.data.access, refresh: response.data.refresh });
+      } catch (error) {
+        throw error;
+      }
     },
-    userLogout ({ commit }) {
-      commit('destroyToken')
-    }
-  }
-})
+    async refreshToken({ commit, state }) {
+      try {
+        const response = await getAPI.post('/api/api-token-refresh/', {
+          refresh: state.refreshToken,
+        });
+        commit('updateStorage', { access: response.data.access, refresh: state.refreshToken });
+      } catch (error) {
+        throw error;
+      }
+    },
+    userLogout({ commit }) {
+      commit('destroyToken');
+    },
+  },
+});
+
+export default store;

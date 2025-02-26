@@ -70,49 +70,66 @@
 </template>
 
 <script>
+import { computed, ref, onMounted } from 'vue';
+import { useStore } from 'vuex';
 import AppNavbar from '../components/AppNavbar.vue';
 import userController from '../api/userController';
 
 export default {
   name: 'UserList',
   components: { AppNavbar },
-  data() {
-    return {
-      users: [],
-      selectedUser: null
+  setup() {
+    const store = useStore();
+    const users = ref([]);
+    const selectedUser = ref(null);
+
+    const fetchUsers = async () => {
+      users.value = await userController.getUsers(store.state.accessToken);
     };
-  },
-  async created() {
-    this.users = await userController.getUsers();
-  },
-  methods: {
-    async viewUser(id) {
-      this.selectedUser = await userController.getUserById(id);
-    },
-    async editUser(user) {
-      this.selectedUser = { ...user }; // Copy user details to modal form
-    },
-    async saveUser() {
+
+    onMounted(fetchUsers);
+
+    const viewUser = async (id) => {
+      selectedUser.value = await userController.getUserById(id, store.state.accessToken);
+    };
+
+    const editUser = (user) => {
+      selectedUser.value = { ...user };
+    };
+
+    const saveUser = async () => {
       try {
-        await userController.updateUser(this.selectedUser.id, this.selectedUser);
-        this.selectedUser = null; // Close modal after saving
-        this.users = await userController.getUsers(); // Refresh user list
+        await userController.updateUser(selectedUser.value.id, selectedUser.value, store.state.accessToken);
+        selectedUser.value = null;
+        fetchUsers();
       } catch (error) {
         console.error('Error updating user:', error);
       }
-    },
-    async deleteUser(id) {
-      const confirmed = confirm("Are you sure you want to delete this user?");
+    };
+
+    const deleteUser = async (id) => {
+      const confirmed = confirm('Are you sure you want to delete this user?');
       if (confirmed) {
-        const success = await userController.deleteUser(id);
+        const success = await userController.deleteUser(id, store.state.accessToken);
         if (success) {
-          this.users = this.users.filter(user => user.id !== id);
+          users.value = users.value.filter((user) => user.id !== id);
         }
       }
-    }
-  }
+    };
+
+    return {
+      users,
+      selectedUser,
+      viewUser,
+      editUser,
+      saveUser,
+      deleteUser,
+    };
+  },
 };
 </script>
+
+
 
 <style scoped>
 /* Modal styles */

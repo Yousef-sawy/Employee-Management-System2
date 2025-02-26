@@ -23,33 +23,42 @@
   </template>
   
   <script>
-    export default {
-      name: 'login',
-      data () {
-        return {
-          username: '',
-          password: '',
-          incorrectAuth: false
-        }
-      },
-      methods: {
-        login () { 
-          this.$store.dispatch('userLogin', {
-            username: this.username,
-            password: this.password
-          })
-          .then(() => {
-            this.$router.push({ name: 'companies' })
-          })
-          .catch(err => {
-            console.log(err)
-            this.incorrectAuth = true
-          })
-          }
-        }
-    }
-  </script>
+  import { useStore } from 'vuex';
+  import { useRouter } from 'vue-router';
+  import { ref } from 'vue';
   
+  export default {
+    name: 'login',
+    setup() {
+      const store = useStore(); // ✅ Get Vuex store
+      const router = useRouter();
+      const username = ref('');
+      const password = ref('');
+      const incorrectAuth = ref(false);
+  
+      const login = async () => {
+        try {
+          await store.dispatch('userLogin', {
+            username: username.value,
+            password: password.value
+          });
+          router.push({ name: 'companies' });
+        } catch (err) {
+          console.error(err);
+          incorrectAuth.value = true;
+        }
+      };
+  
+      return {
+        username,
+        password,
+        incorrectAuth,
+        login
+      };
+    }
+  };
+  </script>
+    
   <style>
   body { 
     background-color:#f4f4f4;

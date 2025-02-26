@@ -1,64 +1,76 @@
-import { getAPI } from '../axios-api';
+import axios from 'axios';
+import store from '../Auth';
 
-export default {
-  async getUsers(token) {
+const API_URL = 'http://127.0.0.1:8000/api/users/';
+
+const userController = {
+  async getUsers() {
     try {
-      const response = await getAPI.get('/api/users/', {
+      let token = store.state.accessToken;
+      if (!token) throw new Error("No access token found");
+
+      const response = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error.response?.data || error.message);
+      if (error.response?.status === 401) {
+        await store.dispatch('refreshToken'); // Refresh token if expired
+        return await userController.getUsers(); // Retry request
+      }
       return [];
     }
   },
 
-  async getUserById(id, token) {
+  async createUser(userData) {
     try {
-      const response = await getAPI.get(`/api/users/${id}/`, {
+      let token = store.state.accessToken;
+      const response = await axios.post(API_URL, userData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
     } catch (error) {
-      console.error('Error fetching user details:', error);
+      console.error("Error creating user:", error.response?.data || error.message);
       return null;
     }
   },
 
-  async createUser(userData, token) {
+  async updateUser(id, userData) {
     try {
-      const response = await getAPI.post('/api/users/', userData, {
+      let token = store.state.accessToken;
+  
+      // Remove password field if it's unchanged (i.e., '********')
+      const dataToSend = { ...userData };
+      if (dataToSend.password === '********' || dataToSend.password === '') {
+        delete dataToSend.password;
+      }
+  
+      const response = await axios.put(`${API_URL}${id}/`, dataToSend, {
         headers: { Authorization: `Bearer ${token}` },
       });
+  
       return response.data;
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error("Error updating user:", error.response?.data || error.message);
       return null;
     }
-  },
+  }
+  
+  ,
 
-  async updateUser(id, userData, token) {
+  async deleteUser(id) {
     try {
-      const { email, ...dataWithoutEmail } = userData;
-      const response = await getAPI.put(`/api/users/${id}/`, dataWithoutEmail, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error updating user:', error);
-      return null;
-    }
-  },
-
-  async deleteUser(id, token) {
-    try {
-      await getAPI.delete(`/api/users/${id}/`, {
+      let token = store.state.accessToken;
+      await axios.delete(`${API_URL}${id}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return true;
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error.response?.data || error.message);
       return false;
     }
   },
 };
+
+export default userController;

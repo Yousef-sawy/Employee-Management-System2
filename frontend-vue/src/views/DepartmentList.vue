@@ -44,7 +44,10 @@
           </div>
           <div class="modal-body">
             <p><strong>ID:</strong> {{ selectedDepartment.id }}</p>
-            <p><strong>Company:</strong> {{ selectedDepartment.company.name }}</p>
+
+          <p class="card-text"><strong>Company:</strong> {{ department.company.name }}</p>
+
+
             <p><strong>Employees:</strong> {{ selectedDepartment.num_employees }}</p>
           </div>
           <div class="modal-footer">

@@ -9,6 +9,12 @@ import EditDepartment from './views/create/EditDepartment.vue'; // ✅ Updated p
 import EmployeeList from './views/EmployeeList.vue';
 import EditEmployee from './views/create/EditEmployee.vue';
 
+
+import Login from './views/Authentcation/Login.vue';
+import Logout from './views/Authentcation/Logout.vue';
+
+
+
 const routes = [
     { path: '/', name: 'users', component: UserList },
     { path: '/edit-user/:id', name: 'edit-user', component: EditUser, props: true },
@@ -24,7 +30,12 @@ const routes = [
 
     { path: '/employees', name: 'employees', component: EmployeeList },
     { path: '/edit-employee/:id', name: 'edit-employee', component: EditEmployee, props: true },
-    { path: '/create-employee', name: 'create-employee', component: EditEmployee }
+    { path: '/create-employee', name: 'create-employee', component: EditEmployee },
+
+
+    { path: '/Login', name: 'login', component: Login },
+    { path: '/Logout', name: 'logout', component: Logout },
+
 ];
 
 const router = createRouter({

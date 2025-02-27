@@ -2,6 +2,8 @@
 
 This is a full-stack Employee Management System built using Django (Backend) and Vue.js (Frontend). It provides role-based access control, with the admin role fully implemented, and RESTful APIs for efficient employee management. The employee role is currently under development.
 
+**Important:** Before using the website, you must register an account and then log in.
+
 ## Features
 
 * **User Management:**
@@ -127,3 +129,19 @@ Once the backend server is running and you are authenticated, you can access the
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a pull request.
+![Screenshot 2025-02-27 103435](https://github.com/user-attachments/assets/2f97c194-2df4-43fc-a573-f97473c30b81)
+![Screenshot 2025-02-27 103418](https://github.com/user-attachments/assets/7f17845b-1dc3-4e6b-b4fd-24a7b72f7b66)
+![Screenshot 2025-02-27 103402](https://github.com/user-attachments/assets/221b632f-bacb-439d-9114-c7fcd674f75f)
+![Screenshot 2025-02-27 103322](https://github.com/user-attachments/assets/7b639ed1-485f-4d98-b73a-8f574a6b4b29)
+![Screenshot 2025-02-27 103304](https://github.com/user-attachments/assets/8faefad7-54b1-4a9a-8ee5-394907151cfc)
+![Screenshot 2025-02-27 103236](https://github.com/user-attachments/assets/a1d18f69-60b9-4d2c-ae6c-057741056c7b)
+![Screenshot 2025-02-27 103200](https://github.com/user-attachments/assets/fa57e8f7-e7bc-47c1-9603-8ecc3340cf08)
+![Screenshot 2025-02-27 103128](https://github.com/user-attachments/assets/60b8d10a-2514-4e21-9b1d-5b3b58566891)
+![Screenshot 2025-02-27 104012](https://github.com/user-attachments/assets/96653885-9cde-4d4c-9dd0-ecb03ff8d150)
+![Screenshot 2025-02-27 104002](https://github.com/user-attachments/assets/10793716-95c0-4074-91c6-65564c350dbc)
+![Screenshot 2025-02-27 103604](https://github.com/user-attachments/assets/ef58bc50-8cca-4d1e-877d-20ee81ab99c1)
+![Screenshot 2025-02-27 103555](https://github.com/user-attachments/assets/393c36a8-49c6-4451-85f0-bfb7d948d7f8)

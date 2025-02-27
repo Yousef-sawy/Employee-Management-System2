@@ -32,11 +32,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'Users',
     'Company',
     'Departments',
     'Employee',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,8 +56,11 @@ CORS_ORIFIN_WHITELIST=(
     'http://localhost:8080/',
     'http://127.0.0.1:8080/',
 )
-CORS_ALLOW_ALL_ORIGINS = True  # Allows all origins (for development only)
+CORS_ALLOW_ALL_ORIGINS = True  
 CORS_ALLOW_CREDENTIALS = True 
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'contenttype',
+]
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -132,3 +137,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_METHODS = list(default_methods)  # Allows default HTTP methods
 CORS_ALLOW_HEADERS = list(default_headers)  # Allows default headers
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}

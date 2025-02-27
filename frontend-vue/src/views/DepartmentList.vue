@@ -1,13 +1,11 @@
 <template>
-  <div class="department-list">
+  <div class="department">
     <AppNavbar />
-    <h1> List of Departments</h1>
+    <h1>Department List</h1>
 
-    <!-- ✅ Create Department Button -->
-    <div class="container mb-3">
-      <router-link :to="{ name: 'create-department' }" class="btn btn-success">
-        Create Department
-      </router-link>
+    <!-- Create Department Button -->
+    <div class="container mb-3 text-right">
+      <button @click="openCreateModal" class="btn btn-success">Create Department</button>
     </div>
 
     <div class="album py-5 bg-light">
@@ -17,21 +15,14 @@
             <div class="card mb-4 box-shadow">
               <div class="card-body">
                 <h4 class="text-secondary">{{ department.name }}</h4>
-                
-                <p class="card-text"><strong>In Company:</strong> {{ department.company_name }}</p>
+                <p class="card-text"><strong>Company:</strong> {{ department.company_name }}</p>
                 <p class="card-text"><strong>Employees:</strong> {{ department.num_employees }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
-                    <button @click="viewDepartment(department.id)" class="btn btn-sm btn-outline-primary">
-                      View
-                    </button>
-                    <router-link :to="{ name: 'edit-department', params: { id: department.id } }"
-                      class="btn btn-sm btn-outline-secondary">
-                      Edit
-                    </router-link>
-                    <button @click="deleteDepartment(department.id)" class="btn btn-sm btn-outline-danger">
-                      Delete
-                    </button>
+                    <!-- View Button -->
+                    <button @click="viewDepartment(department)" class="btn btn-sm btn-outline-primary">View</button>
+                    <button @click="openEditModal(department)" class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button @click="deleteDepartment(department.id)" class="btn btn-sm btn-outline-danger">Delete</button>
                   </div>
                   <small class="text-muted">ID: {{ department.id }}</small>
                 </div>
@@ -43,7 +34,7 @@
       </div>
     </div>
 
-    <!-- ✅ Modal for Viewing Department Details -->
+    <!-- Modal for Viewing Department Details -->
     <div v-if="selectedDepartment" class="modal fade show d-block" tabindex="-1" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -53,7 +44,10 @@
           </div>
           <div class="modal-body">
             <p><strong>ID:</strong> {{ selectedDepartment.id }}</p>
-            <p><strong>Company:</strong> {{ selectedDepartment.company.name }}</p>
+
+          <p class="card-text"><strong>Company:</strong> {{ department.company.name }}</p>
+
+
             <p><strong>Employees:</strong> {{ selectedDepartment.num_employees }}</p>
           </div>
           <div class="modal-footer">
@@ -63,12 +57,47 @@
       </div>
     </div>
     <div v-if="selectedDepartment" class="modal-backdrop fade show"></div>
+
+    <!-- Modal for Creating or Editing Department -->
+    <div v-if="showModal" class="modal fade show d-block" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ isEditMode ? "Edit Department" : "Create Department" }}</h5>
+            <button type="button" class="close" @click="closeModal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="saveDepartment">
+              <div class="form-group">
+                <label for="name">Department Name:</label>
+                <input type="text" id="name" v-model="department.name" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label for="company">Company:</label>
+                <select id="company" v-model="department.company" class="form-control" required>
+                  <option v-for="company in companies" :key="company.id" :value="company.id">
+                    {{ company.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="num_employees">Number of Employees:</label>
+                <input type="number" id="num_employees" v-model="department.num_employees" class="form-control" required />
+              </div>
+              <button type="submit" class="btn btn-primary">{{ isEditMode ? "Save Changes" : "Create Department" }}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="showModal" class="modal-backdrop fade show"></div>
   </div>
 </template>
 
 <script>
 import AppNavbar from '../components/AppNavbar.vue';
 import departmentController from '../api/departmentController';
+import companyController from '../api/companyController';
 
 export default {
   name: 'DepartmentList',
@@ -76,33 +105,65 @@ export default {
   data() {
     return {
       departments: [],
-      selectedDepartment: null
+      companies: [],
+      showModal: false,
+      department: { id: null, name: '', company: null, num_employees: 0 },
+      selectedDepartment: null, 
+      isEditMode: false,
     };
   },
   async created() {
-    try {
-      this.departments = await departmentController.getDepartments();
-    } catch (error) {
-      console.error("Error fetching departments:", error);
-    }
+    this.departments = await departmentController.getDepartments();
+    this.companies = await companyController.getCompanies();
   },
   methods: {
-    async viewDepartment(id) {
-      this.selectedDepartment = await departmentController.getDepartmentById(id);
+    openCreateModal() {
+      this.isEditMode = false;
+      this.department = { id: null, name: '', company: null, num_employees: 0 };
+      this.showModal = true;
+    },
+    openEditModal(department) {
+      this.isEditMode = true;
+      this.department = { ...department }; 
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
+    async saveDepartment() {
+      try {
+        if (this.isEditMode) {
+          
+          await departmentController.updateDepartment(this.department.id, this.department);
+        } else {
+          
+          await departmentController.createDepartment(this.department);
+        }
+
+        
+        this.showModal = false;
+        this.departments = await departmentController.getDepartments();
+      } catch (error) {
+        console.error("Error saving department:", error);
+      }
     },
     async deleteDepartment(id) {
       const confirmed = confirm("Are you sure you want to delete this department?");
       if (confirmed) {
-        await departmentController.deleteDepartment(id);
-        this.departments = this.departments.filter(dept => dept.id !== id);
+        const success = await departmentController.deleteDepartment(id);
+        if (success) {
+          this.departments = this.departments.filter(department => department.id !== id);
+        }
       }
+    },
+    viewDepartment(department) {
+      this.selectedDepartment = department; 
     }
   }
 };
 </script>
 
 <style scoped>
-/* ✅ Modal styles */
 .modal {
   background: rgba(0, 0, 0, 0.5);
   position: fixed;
@@ -114,11 +175,13 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
 .modal-content {
   background: white;
   padding: 20px;
   border-radius: 5px;
 }
+
 .modal-backdrop {
   background: rgba(0, 0, 0, 0.5);
   position: fixed;

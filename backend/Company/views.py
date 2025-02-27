@@ -3,8 +3,14 @@ from .models import Company
 from .serializers import CompanySerializer
 from django.db.models import Count
 
+from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+
+
 class CompanyViewSet(ModelViewSet):
-    queryset = Company.objects.all()  # ✅ No need for annotation here
+    permission_classes =(IsAuthenticated,)
+    queryset = Company.objects.all()
     serializer_class = CompanySerializer
     
     

@@ -3,6 +3,6 @@ from .views import EmployeeViewSet
 from django.urls import path
 
 router = DefaultRouter()
-router.register(r'employees', EmployeeViewSet)  # /api/employees/
+router.register(r'employees', EmployeeViewSet)  
 
 urlpatterns = router.urls

@@ -1,23 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import UserList from './views/UserList.vue';
-import EditUser from './views/EditUser.vue';
 import CompanyList from './views/CompanyList.vue';
-import EditCompany from './views/EditCompany.vue';
 import DepartmentList from './views/DepartmentList.vue';
-import EditDepartment from './views/EditDepartment.vue';
+import EmployeeList from './views/EmployeeList.vue';
+
+import Login from './views/Authentcation/Login.vue';
+import Logout from './views/Authentcation/Logout.vue';
+import Register from './views/Authentcation/Register.vue';
+
+import store from './Auth'; 
 
 const routes = [
-    { path: '/', name: 'users', component: UserList },
-    { path: '/edit-user/:id', name: 'edit-user', component: EditUser, props: true },
-    { path: '/create-user', name: 'create-user', component: EditUser }, // ✅ Create User Route
+    { path: '/', name: 'users', component: UserList, meta: { requiresLogin: true } },
+    { path: '/companies', name: 'companies', component: CompanyList, meta: { requiresLogin: true } },
+    { path: '/departments', name: 'departments', component: DepartmentList, meta: { requiresLogin: true } },
+    { path: '/employees', name: 'employees', component: EmployeeList, meta: { requiresLogin: true } },
 
-    { path: '/companies', name: 'companies', component: CompanyList },
-    { path: '/edit-company/:id', name: 'edit-company', component: EditCompany, props: true },
-    { path: '/create-company', name: 'create-company', component: EditCompany }, // ✅ Create Company Route
-    
-    { path: '/departments', name: 'departments', component: DepartmentList },
-    { path: '/edit-department/:id', name: 'edit-department', component: EditDepartment, props: true },
-    { path: '/create-department', name: 'create-department', component: EditDepartment } // ✅ Create Department Route
+    { path: '/login', name: 'login', component: Login },
+    { path: '/logout', name: 'logout', component: Logout },
+    { path: '/register', name: 'register', component: Register },  
 ];
 
 const router = createRouter({
@@ -25,5 +26,16 @@ const router = createRouter({
     routes
 });
 
-export default router;
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresLogin)) {
+        if (!store.state.accessToken) {
+            next({ name: 'login' }); 
+        } else {
+            next(); 5
+        }
+    } else {
+        next(); 
+    }
+});
 
+export default router;

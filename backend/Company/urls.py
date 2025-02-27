@@ -3,6 +3,6 @@ from .views import CompanyViewSet
 from django.urls import path
 
 router = DefaultRouter()
-router.register(r'companies', CompanyViewSet)  # /api/companies/
+router.register(r'companies', CompanyViewSet)  
 
 urlpatterns = router.urls

@@ -7,7 +7,7 @@ class Department(models.Model):
     name = models.CharField(max_length=255)
 
     class Meta:
-        unique_together = ('company', 'name')  # Prevents duplicate department names within a company
+        unique_together = ('company', 'name')  
 
     def __str__(self):
         return f"{self.name} ({self.company.name})"
@@ -22,5 +22,5 @@ class Department(models.Model):
             raise ValidationError(f"A department named '{self.name}' already exists in {self.company.name}.")
     
     def save(self, *args, **kwargs):
-        self.clean()  # Run validation before saving
+        self.clean()  
         super().save(*args, **kwargs)

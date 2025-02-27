@@ -1,7 +1,7 @@
 from django.db import models
 from Company.models import Company
 from Departments.models import Department
-from Users.models import User  # Import only the correct User model
+from Users.models import User  
 from datetime import date
 
 class Employee(models.Model):
@@ -28,6 +28,8 @@ class Employee(models.Model):
     address = models.TextField()
     designation = models.CharField(max_length=255)
     hired_on = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True)      
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.designation}"

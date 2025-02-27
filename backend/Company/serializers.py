@@ -1,10 +1,9 @@
 from rest_framework import serializers
 from .models import Company
-from Departments.models import Department  # Adjust this if needed
+from Departments.models import Department  
 
 class CompanySerializer(serializers.ModelSerializer):
-    num_departments = serializers.SerializerMethodField()  # ✅ Use SerializerMethodField
-
+    num_departments = serializers.SerializerMethodField()  
     class Meta:
         model = Company
         fields = '__all__'

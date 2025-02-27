@@ -7,26 +7,26 @@
         <!-- Username -->
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" id="username" v-model.trim="newUser.username" class="form-control" required />
+          <input type="text" id="username" v-model.trim="newUser.username" class="form-control" @input="validateUsername" required />
           <small v-if="errors.username" class="text-danger">{{ errors.username }}</small>
         </div>
 
         <!-- Email -->
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" v-model.trim="newUser.email" class="form-control" required />
+          <input type="email" id="email" v-model.trim="newUser.email" class="form-control" @input="validateEmail" @blur="checkEmailExists" required />
           <small v-if="errors.email" class="text-danger">{{ errors.email }}</small>
         </div>
 
         <!-- Password -->
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" v-model="newUser.password" class="form-control" required />
+          <input type="password" id="password" v-model="newUser.password" class="form-control" @input="validatePassword" required />
           <small v-if="errors.password" class="text-danger">{{ errors.password }}</small>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary btn-block">Register</button>
+        <button type="submit" class="btn btn-primary btn-block" :disabled="hasErrors">Register</button>
 
         <!-- API Error -->
         <small v-if="errors.apiError" class="text-danger text-center d-block mt-2">
@@ -46,7 +46,7 @@
 import userController from '../../api/userController';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 export default {
   name: 'Register',
@@ -62,24 +62,75 @@ export default {
 
     const errors = ref({});
 
-    const validateForm = () => {
-      errors.value = {};
-      let valid = true;
+    // Check if email already exists in the backend
+    const checkEmailExists = async () => {
+      if (!newUser.value.email) return;
+      try {
+        const response = await userController.checkEmail(newUser.value.email);
+        if (response.exists) {
+          errors.value.email = "This email is already registered";
+        } else {
+          errors.value.email = "";
+        }
+      } catch (error) {
+        console.error("Error checking email existence:", error);
+      }
+    };
 
-      if (!newUser.value.username.trim()) {
+    // Username Validation
+    const validateUsername = () => {
+      const username = newUser.value.username.trim();
+      if (!username) {
         errors.value.username = "Username is required";
-        valid = false;
+      } else if (username.length < 3) {
+        errors.value.username = "Username must be at least 3 characters";
+      } else if (!/^[A-Za-z]+$/.test(username)) {
+        errors.value.username = "Username must contain only letters";
+      } else {
+        errors.value.username = "";
       }
-      if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(newUser.value.email)) {
-        errors.value.email = "Enter a valid email address";
-        valid = false;
-      }
-      if (newUser.value.password.length < 6) {
-        errors.value.password = "Password must be at least 6 characters";
-        valid = false;
-      }
+    };
 
-      return valid;
+    // Email Validation
+    const validateEmail = () => {
+      const email = newUser.value.email.trim();
+      if (!email) {
+        errors.value.email = "Email is required";
+      } else if (!/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+        errors.value.email = "Enter a valid email address";
+      } else {
+        errors.value.email = "";
+      }
+    };
+
+    // Password Validation
+    const validatePassword = () => {
+      const password = newUser.value.password;
+      if (!password) {
+        errors.value.password = "Password is required";
+      } else if (password.length < 6) {
+        errors.value.password = "Password must be at least 6 characters";
+      } else if (!/[A-Z]/.test(password)) {
+        errors.value.password = "Password must contain at least one uppercase letter";
+      } else if (!/[a-z]/.test(password)) {
+        errors.value.password = "Password must contain at least one lowercase letter";
+      } else if (!/\d/.test(password)) {
+        errors.value.password = "Password must contain at least one number";
+      } else {
+        errors.value.password = "";
+      }
+    };
+
+    // Check if any errors exist
+    const hasErrors = computed(() => {
+      return Object.values(errors.value).some((error) => error);
+    });
+
+    const validateForm = () => {
+      validateUsername();
+      validateEmail();
+      validatePassword();
+      return !hasErrors.value;
     };
 
     const registerUser = async () => {
@@ -94,8 +145,13 @@ export default {
 
         router.push({ name: 'users' });
       } catch (error) {
-        errors.value.apiError = error.response?.data?.detail || "Registration failed. Please try again.";
         console.error("Error during registration:", error);
+
+        if (error.response?.data?.email) {
+          errors.value.email = "This email is already registered";
+        } else {
+          errors.value.apiError = error.response?.data?.detail || "Registration failed. Please try again.";
+        }
       }
     };
 
@@ -103,6 +159,11 @@ export default {
       newUser,
       errors,
       registerUser,
+      validateUsername,
+      validateEmail,
+      validatePassword,
+      checkEmailExists,
+      hasErrors,
     };
   },
 };

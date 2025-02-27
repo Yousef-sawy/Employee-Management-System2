@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '../Auth'; // Import Vuex store for authentication
+import store from '../Auth'; 
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api/employees/';
 
@@ -23,7 +23,7 @@ const employeeController = {
     } catch (error) {
       console.error("Error fetching employees:", error.response?.data || error.message);
   
-      // Handle unauthorized access by refreshing the token
+      
       if (error.response?.status === 401) {
         try {
           await store.dispatch("refreshToken");
@@ -71,7 +71,7 @@ const employeeController = {
 
 async updateEmployee(id, employeeData) {
   try {
-    console.log("Updating Employee Data:", employeeData); // Debugging
+    console.log("Updating Employee Data:", employeeData); 
     let token = store.state.accessToken;
     const response = await axios.put(
       `${API_BASE_URL}${id}/`,
@@ -81,7 +81,7 @@ async updateEmployee(id, employeeData) {
     return response.data;
   } catch (error) {
     console.error("Error updating employee:", error.response?.data || error.message);
-    alert("Update failed: " + JSON.stringify(error.response?.data)); // Show Django error
+    alert("Update failed: " + JSON.stringify(error.response?.data)); 
     return null;
   }
 }

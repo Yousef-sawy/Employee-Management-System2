@@ -9,4 +9,4 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = ['id', 'company', 'company_name', 'name', 'num_employees']
 
     def get_company_name(self, obj):
-        return obj.company.name  # Ensure company is properly related in the model
+        return obj.company.name  

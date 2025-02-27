@@ -35,7 +35,7 @@
             <button type="submit" class="btn btn-lg btn-primary btn-block">Login</button>
           </form>
 
-          <!-- Register link below the login form -->
+          
           <p class="mt-3 text-center">
             Don't have an account? 
             <router-link to="/register" class="text-primary">Sign up here</router-link>
@@ -55,7 +55,7 @@ export default {
   name: 'Login',
   
   setup() {
-    const store = useStore(); // ✅ Get Vuex store
+    const store = useStore(); 
     const router = useRouter();
     const username = ref('');
     const password = ref('');
@@ -68,11 +68,11 @@ export default {
           password: password.value
         });
 
-        await store.dispatch('fetchUserData'); // Ensure user details are loaded
-        router.push({ name: 'users' }); // Redirect after successful login
+        await store.dispatch('fetchUserData'); 
+        router.push({ name: 'users' });
       } catch (err) {
         console.error(err);
-        incorrectAuth.value = true; // Show error if login fails
+        incorrectAuth.value = true; 
       }
     };
 

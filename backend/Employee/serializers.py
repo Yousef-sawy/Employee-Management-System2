@@ -31,7 +31,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create Employee and link to a User (if provided)."""
-        user = validated_data.pop("user_id", None)  # Retrieve user from `user_id`
+        user = validated_data.pop("user_id", None)  
 
         if user and Employee.objects.filter(user=user).exists():
             raise serializers.ValidationError({"user_id": "An employee for this user already exists."})
@@ -43,7 +43,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
         user = validated_data.pop("user_id", None)
 
         if user:
-            # Prevent assigning a user that already has another employee record
             if Employee.objects.filter(user=user).exclude(id=instance.id).exists():
                 raise serializers.ValidationError({"user_id": "This user is already assigned to another employee."})
             instance.user = user

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User
+from django.contrib.auth.models import User  # ✅ Use Django's built-in User model
+
 from django.contrib.auth.hashers import make_password
 
 class UserSerializer(serializers.ModelSerializer):
@@ -7,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'password']
         extra_kwargs = {
-            'password': {'write_only': True, 'required': False},  # Password optional for updates
+            'password': {'write_only': True, 'required': False},  
         }
 
     def create(self, validated_data):

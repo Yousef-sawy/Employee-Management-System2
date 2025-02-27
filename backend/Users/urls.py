@@ -3,7 +3,7 @@ from .views import UserViewSet
 from django.urls import path
 
 router = DefaultRouter()
-router.register(r'users', UserViewSet)  # /api/users/
+router.register(r'users', UserViewSet)  
 
 urlpatterns = router.urls
 

@@ -99,7 +99,7 @@ export default {
       companies: [],
       showModal: false,
       company: { id: null, name: '', num_departments: 0, num_employees: 0 },
-      selectedCompany: null, // For viewing company details
+      selectedCompany: null, 
       isEditMode: false,
     };
   },
@@ -114,7 +114,7 @@ export default {
     },
     openEditModal(company) {
       this.isEditMode = true;
-      this.company = { ...company }; // Clone the company to prevent modifying the original data
+      this.company = { ...company }; 
       this.showModal = true;
     },
     closeModal() {
@@ -123,14 +123,14 @@ export default {
     async saveCompany() {
       try {
         if (this.isEditMode) {
-          // Edit the company
+          
           await companyController.updateCompany(this.company.id, this.company);
         } else {
-          // Create a new company
+          
           await companyController.createCompany(this.company);
         }
 
-        // Close the modal and refresh the company list
+        
         this.showModal = false;
         this.companies = await companyController.getCompanies();
       } catch (error) {
@@ -147,7 +147,7 @@ export default {
       }
     },
     viewCompany(company) {
-      this.selectedCompany = company; // Set the selected company to be viewed
+      this.selectedCompany = company; 
     }
   }
 };

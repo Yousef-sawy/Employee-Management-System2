@@ -1,5 +1,5 @@
 import axios from 'axios';
-import store from '../Auth'; // Import Vuex store
+import store from '../Auth'; 
 
 const API_URL = 'http://127.0.0.1:8000/api/companies/';
 
@@ -18,8 +18,8 @@ const companyController = {
     } catch (error) {
       console.error("Error fetching companies:", error);
       if (error.response && error.response.status === 401) {
-        await store.dispatch('refreshToken'); // Refresh token if expired
-        return await companyController.getCompanies(); // Retry request
+        await store.dispatch('refreshToken'); 
+        return await companyController.getCompanies(); 
       }
     }
   },

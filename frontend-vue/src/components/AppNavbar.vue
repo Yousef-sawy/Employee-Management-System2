@@ -24,7 +24,7 @@
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
 
-                    <!-- Logout Button -->
+                    
                     <button class="btn btn-danger" @click="logout">Logout</button>
                 </div>
 

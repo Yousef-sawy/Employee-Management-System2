@@ -16,8 +16,8 @@ const userController = {
     } catch (error) {
       console.error("Error fetching users:", error.response?.data || error.message);
       if (error.response?.status === 401) {
-        await store.dispatch('refreshToken'); // Refresh token if expired
-        return await userController.getUsers(); // Retry request
+        await store.dispatch('refreshToken'); 
+        return await userController.getUsers(); 
       }
       return [];
     }
@@ -25,7 +25,7 @@ const userController = {
 
   async createUser(userData) {
     try {
-      const response = await axios.post(API_URL, userData); // No token needed here
+      const response = await axios.post(API_URL, userData); 
       return response.data;
     } catch (error) {
       console.error("Error creating user:", error.response?.data || error.message);
@@ -37,7 +37,7 @@ const userController = {
     try {
       let token = store.state.accessToken;
   
-      // Remove password field if it's unchanged (i.e., '********')
+      
       const dataToSend = { ...userData };
       if (dataToSend.password === '********' || dataToSend.password === '') {
         delete dataToSend.password;

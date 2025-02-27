@@ -128,7 +128,7 @@ export default {
 
     try {
       await userController.deleteUser(userId);
-      this.users = this.users.filter(user => user.id !== userId); // Remove user from list
+      this.users = this.users.filter(user => user.id !== userId); 
     } catch (error) {
       console.error("Error deleting user:", error.response?.data || error);
     }

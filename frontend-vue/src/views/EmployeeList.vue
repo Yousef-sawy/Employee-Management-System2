@@ -169,7 +169,6 @@ export default {
     },
 
     updateEmailFromUser() {
-      // When user changes, update the displayed email
       if (this.employee.username) {
         const selectedUser = this.users.find(user => user.id === this.employee.username);
         this.selectedUserEmail = selectedUser ? selectedUser.email : "";
@@ -184,12 +183,11 @@ export default {
       this.showModal = true;
     },
 
-    // In your openCreateModal function
 openCreateModal() {
   this.isEditMode = true;
   this.employee = { 
     id: null, 
-    username: "", // Try using "user" instead of "username"
+    username: "", 
     company: "",
     department: "",
     address: "",
@@ -214,12 +212,10 @@ openCreateModal() {
     async saveEmployee() {
   console.log("Original employee data:", this.employee);
   
-  // Create a copy of the employee object
   const employeeData = { ...this.employee };
 
   if (!employeeData.id) {
-    // Ensure the correct format (depending on the backend requirement)
-    employeeData.user_id = employeeData.username;  // If backend expects a user ID directly
+    employeeData.user_id = employeeData.username;  
     delete employeeData.username;
   }
 

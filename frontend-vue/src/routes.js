@@ -8,7 +8,7 @@ import Login from './views/Authentcation/Login.vue';
 import Logout from './views/Authentcation/Logout.vue';
 import Register from './views/Authentcation/Register.vue';
 
-import store from './Auth'; // Import your Vuex store
+import store from './Auth'; 
 
 const routes = [
     { path: '/', name: 'users', component: UserList, meta: { requiresLogin: true } },
@@ -18,7 +18,7 @@ const routes = [
 
     { path: '/login', name: 'login', component: Login },
     { path: '/logout', name: 'logout', component: Logout },
-    { path: '/register', name: 'register', component: Register },  // Registration page is accessible without auth
+    { path: '/register', name: 'register', component: Register },  
 ];
 
 const router = createRouter({
@@ -26,18 +26,15 @@ const router = createRouter({
     routes
 });
 
-// Global Navigation Guard to check authentication
 router.beforeEach((to, from, next) => {
-    // Check if the route requires login (protected routes)
     if (to.matched.some(record => record.meta.requiresLogin)) {
-        // If the user is not authenticated (no accessToken)
         if (!store.state.accessToken) {
-            next({ name: 'login' }); // Redirect to login if not authenticated
+            next({ name: 'login' }); 
         } else {
-            next(); // Proceed to the route if authenticated
+            next(); 5
         }
     } else {
-        next(); // Allow access to the register and login pages (no auth needed)
+        next(); 
     }
 });
 

@@ -108,7 +108,7 @@ export default {
       companies: [],
       showModal: false,
       department: { id: null, name: '', company: null, num_employees: 0 },
-      selectedDepartment: null, // For viewing department details
+      selectedDepartment: null, 
       isEditMode: false,
     };
   },
@@ -124,7 +124,7 @@ export default {
     },
     openEditModal(department) {
       this.isEditMode = true;
-      this.department = { ...department }; // Clone the department to prevent modifying the original data
+      this.department = { ...department }; 
       this.showModal = true;
     },
     closeModal() {
@@ -133,14 +133,14 @@ export default {
     async saveDepartment() {
       try {
         if (this.isEditMode) {
-          // Edit the department
+          
           await departmentController.updateDepartment(this.department.id, this.department);
         } else {
-          // Create a new department
+          
           await departmentController.createDepartment(this.department);
         }
 
-        // Close the modal and refresh the department list
+        
         this.showModal = false;
         this.departments = await departmentController.getDepartments();
       } catch (error) {
@@ -157,7 +157,7 @@ export default {
       }
     },
     viewDepartment(department) {
-      this.selectedDepartment = department; // Set the selected department to be viewed
+      this.selectedDepartment = department; 
     }
   }
 };

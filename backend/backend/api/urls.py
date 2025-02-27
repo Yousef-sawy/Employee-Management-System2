@@ -1,6 +1,5 @@
-# backend/api/urls.py
 from django.urls import path, include
-from Users.views import UserViewSet
+from Users.views import UserViewSet  # Import register_user function
 from Company.views import CompanyViewSet
 from Departments.views import DepartmentViewSet
 from Employee.views import EmployeeViewSet
@@ -14,7 +13,8 @@ router.register(r'departments', DepartmentViewSet)
 router.register(r'employees', EmployeeViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),  # This includes all routes from the router
+    path('', include(router.urls)),  # Includes all router URLs
     path('api-token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api-token-refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
 ]

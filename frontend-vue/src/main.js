@@ -15,7 +15,7 @@ app.use(store); // ✅ Add Vuex store
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresLogin)) {
     if (!store.state.accessToken) {
-      next({ name: 'login' });
+      next({ name: 'register' });
     } else {
       next();
     }

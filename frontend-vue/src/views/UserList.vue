@@ -16,7 +16,6 @@
               <div class="card-body">
                 <h4 class="text-secondary">{{ user.username }}</h4>
                 <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
-                <p class="card-text"><strong>Role:</strong> {{ user.role }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="btn-group">
                     <button @click="viewUser(user)" class="btn btn-sm btn-outline-primary">View</button>
@@ -43,7 +42,6 @@
           </div>
           <div class="modal-body">
             <p><strong>Email:</strong> {{ selectedUser.email }}</p>
-            <p><strong>Role:</strong> {{ selectedUser.role }}</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="selectedUser = null">Close</button>
@@ -83,14 +81,6 @@
               />
             </div>
 
-
-              <div class="form-group">
-                <label for="role">Role:</label>
-                <select id="role" v-model="user.role" class="form-control" required>
-                  <option value="admin">Admin</option>
-                  <option value="employee">Employee</option>
-                </select>
-              </div>
               <button type="submit" class="btn btn-primary">{{ isEditMode ? "Save Changes" : "Create User" }}</button>
             </form>
           </div>
@@ -112,7 +102,7 @@ export default {
     return {
       users: [],
       showModal: false,
-      user: { id: null, username: '', email: '', password: '', role: 'employee' },
+      user: { id: null, username: '', email: '', password: '' },
       selectedUser: null,
       isEditMode: false,
       errors: { email: '' },
@@ -127,12 +117,12 @@ export default {
     },
     openCreateModal() {
       this.isEditMode = false;
-      this.user = { id: null, username: '', email: '', password: '', role: 'employee' };
+      this.user = { id: null, username: '', email: '', password: '' };
       this.showModal = true;
     },
     openEditModal(user) {
   this.isEditMode = true;
-  this.user = { ...user, password: "********" }; // Show password as hidden but readonly
+  this.user = { ...user, password: "********" }; 
   this.showModal = true;
 }
 ,
@@ -164,7 +154,7 @@ export default {
 
     this.errors.email = "";
 
-    const updatedUser = { ...this.user };
+    const updatedUser = { id: this.user.id, username: this.user.username, email: this.user.email };
 
     if (this.isEditMode) {
       // Remove password field from the update request

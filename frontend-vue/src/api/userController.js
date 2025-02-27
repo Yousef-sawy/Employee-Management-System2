@@ -25,10 +25,7 @@ const userController = {
 
   async createUser(userData) {
     try {
-      let token = store.state.accessToken;
-      const response = await axios.post(API_URL, userData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.post(API_URL, userData); // No token needed here
       return response.data;
     } catch (error) {
       console.error("Error creating user:", error.response?.data || error.message);

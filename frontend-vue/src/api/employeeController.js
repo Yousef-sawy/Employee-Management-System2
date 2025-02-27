@@ -71,10 +71,13 @@ const employeeController = {
 
 async updateEmployee(id, employeeData) {
   try {
+    console.log("Updating Employee Data:", employeeData); // Debugging
     let token = store.state.accessToken;
-    const response = await axios.put(`${API_BASE_URL}${id}/`, employeeData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axios.put(
+      `${API_BASE_URL}${id}/`,
+      employeeData, 
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating employee:", error.response?.data || error.message);
@@ -82,6 +85,7 @@ async updateEmployee(id, employeeData) {
     return null;
   }
 }
+
 ,
 
   async getEmployeeCountByCompany(companyId) {

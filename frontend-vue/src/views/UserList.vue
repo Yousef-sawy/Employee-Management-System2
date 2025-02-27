@@ -32,24 +32,22 @@
       </div>
     </div>
 
-    <!-- Modal for Viewing User Details -->
-    <div v-if="selectedUser" class="modal fade show d-block" tabindex="-1" role="dialog">
+    <!-- View User Modal -->
+    <div v-if="showViewModal" class="modal fade show d-block" tabindex="-1" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ selectedUser.username }}</h5>
-            <button type="button" class="close" @click="selectedUser = null">&times;</button>
+            <h5 class="modal-title">User Details</h5>
+            <button type="button" class="close" @click="closeViewModal">&times;</button>
           </div>
           <div class="modal-body">
+            <p><strong>Username:</strong> {{ selectedUser.username }}</p>
             <p><strong>Email:</strong> {{ selectedUser.email }}</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="selectedUser = null">Close</button>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="selectedUser" class="modal-backdrop fade show"></div>
+    <div v-if="showViewModal" class="modal-backdrop fade show"></div>
 
     <!-- Modal for Creating or Editing User -->
     <div v-if="showModal" class="modal fade show d-block" tabindex="-1" role="dialog">
@@ -63,23 +61,26 @@
             <form @submit.prevent="saveUser">
               <div class="form-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" v-model="user.username" class="form-control" required />
+                <input type="text" id="username" v-model="user.username" class="form-control" @blur="validateForm" />
+                <small v-if="errors.username" class="text-danger">{{ errors.username }}</small>
               </div>
               <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" v-model="user.email" class="form-control" required :readonly="isEditMode" />
+                <input type="email" id="email" v-model="user.email" class="form-control" :readonly="isEditMode" @blur="validateForm" />
+                <small v-if="errors.email" class="text-danger">{{ errors.email }}</small>
               </div>
               <div class="form-group">
-              <label for="password">Password:</label>
-              <input 
-                type="text" 
-                id="password" 
-                v-model="user.password" 
-                class="form-control"
-                :readonly="isEditMode"  
-                required="!isEditMode"  
-              />
-            </div>
+                <label for="password">Password:</label>
+                <input 
+                  type="password" 
+                  id="password" 
+                  v-model="user.password" 
+                  class="form-control"
+                  :readonly="isEditMode"  
+                  @blur="validateForm"
+                />
+                <small v-if="errors.password" class="text-danger">{{ errors.password }}</small>
+              </div>
 
               <button type="submit" class="btn btn-primary">{{ isEditMode ? "Save Changes" : "Create User" }}</button>
             </form>
@@ -102,10 +103,11 @@ export default {
     return {
       users: [],
       showModal: false,
+      showViewModal: false,
       user: { id: null, username: '', email: '', password: '' },
       selectedUser: null,
       isEditMode: false,
-      errors: { email: '' },
+      errors: { username: '', email: '', password: '' },
     };
   },
   async created() {
@@ -118,102 +120,94 @@ export default {
     openCreateModal() {
       this.isEditMode = false;
       this.user = { id: null, username: '', email: '', password: '' };
+      this.errors = { username: '', email: '', password: '' };
       this.showModal = true;
     },
+    async deleteUser(userId) {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+
+    try {
+      await userController.deleteUser(userId);
+      this.users = this.users.filter(user => user.id !== userId); // Remove user from list
+    } catch (error) {
+      console.error("Error deleting user:", error.response?.data || error);
+    }
+  },
     openEditModal(user) {
-  this.isEditMode = true;
-  this.user = { ...user, password: "********" }; 
-  this.showModal = true;
-}
-,
-    clearPassword() {
-      if (this.isEditMode && this.user.password === "********") {
-        this.user.password = ""; // Clear the masked password when focused
-      }
+      this.isEditMode = true;
+      this.user = { ...user, password: "********" };
+      this.errors = { username: '', email: '', password: '' };
+      this.showModal = true;
     },
     closeModal() {
       this.showModal = false;
     },
-    async saveUser() {
-  try {
-    if (!this.isEditMode) {
-      // Check if email already exists
-      const users = await userController.getUsers();
-      const duplicate = users.find(u => u.email.toLowerCase() === this.user.email.toLowerCase());
-
-      if (duplicate) {
-        this.errors.email = "This email is already in use!";
-        return;
-      }
-
-      if (!this.user.password) {  // Ensure password is entered for new users
-        alert("Password is required for new users.");
-        return;
-      }
-    }
-
-    this.errors.email = "";
-
-    const updatedUser = { id: this.user.id, username: this.user.username, email: this.user.email };
-
-    if (this.isEditMode) {
-      // Remove password field from the update request
-      delete updatedUser.password;
-
-      await userController.updateUser(this.user.id, updatedUser);
-    } else {
-      // Create a new user (password is required)
-      await userController.createUser(this.user);
-    }
-
-    this.showModal = false;
-    await this.fetchUsers(); // Refresh the user list
-  } catch (error) {
-    console.error('Error saving user:', error.response?.data || error);
-  }
-}
-
-
-,
-    async deleteUser(id) {
-      const confirmed = confirm("Are you sure you want to delete this user?");
-      if (confirmed) {
-        const success = await userController.deleteUser(id);
-        if (success) {
-          this.users = this.users.filter(user => user.id !== id);
-        }
-      }
-    },
     viewUser(user) {
       this.selectedUser = user;
+      this.showViewModal = true;
+    },
+    closeViewModal() {
+      this.showViewModal = false;
+    },
+    validateForm() {
+      this.errors = { username: '', email: '', password: '' };
+
+      if (!this.user.username.trim()) {
+        this.errors.username = "Username is required.";
+      } else if (!/^[A-Za-z]+$/.test(this.user.username)) {
+        this.errors.username = "Username must contain only letters.";
+      }
+
+      if (!this.user.email.trim()) {
+        this.errors.email = "Email is required.";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.user.email)) {
+        this.errors.email = "Invalid email format.";
+      }
+
+      if (!this.isEditMode) {
+        if (!this.user.password) {
+          this.errors.password = "Password is required.";
+        } else if (this.user.password.length < 6) {
+          this.errors.password = "Password must be at least 6 characters.";
+        }
+      }
+
+      return Object.values(this.errors).every(error => !error);
+    },
+    async saveUser() {
+      if (!this.validateForm()) {
+        return;
+      }
+
+      try {
+        if (!this.isEditMode) {
+          const users = await userController.getUsers();
+          const duplicate = users.find(u => u.email.toLowerCase() === this.user.email.toLowerCase());
+
+          if (duplicate) {
+            this.errors.email = "This email is already in use!";
+            return;
+          }
+        }
+
+        const updatedUser = { id: this.user.id, username: this.user.username, email: this.user.email };
+
+        if (!this.isEditMode) {
+          updatedUser.password = this.user.password;
+        }
+
+        if (this.isEditMode) {
+          await userController.updateUser(this.user.id, updatedUser);
+        } else {
+          await userController.createUser(updatedUser);
+        }
+
+        this.showModal = false;
+        await this.fetchUsers();
+      } catch (error) {
+        console.error('Error saving user:', error.response?.data || error);
+      }
     },
   },
 };
 </script>
-
-<style scoped>
-.modal {
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-}
-.modal-backdrop {
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-</style>

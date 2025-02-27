@@ -1,6 +1,6 @@
 # Employee Management System
 
-This is a full-stack Employee Management System built using Django (Backend) and Vue.js (Frontend). It provides role-based access control, workflow automation, and RESTful APIs for efficient employee management.
+This is a full-stack Employee Management System built using Django (Backend) and Vue.js (Frontend). It provides role-based access control but admin is implemented only, and RESTful APIs for efficient employee management.
 
 ## Features
 
@@ -113,6 +113,15 @@ This is a full-stack Employee Management System built using Django (Backend) and
     ```bash
     npm run serve
     ```
+
+### API Endpoints
+
+Once the backend server is running, you can access the following API endpoints:
+
+* **Users:** `http://127.0.0.1:8000/api/users/`
+* **Companies:** `http://127.0.0.1:8000/api/companies/`
+* **Departments:** `http://127.0.0.1:8000/api/departments/`
+* **Employees:** `http://127.0.0.1:8000/api/employees/`
 
 ### API Documentation
 

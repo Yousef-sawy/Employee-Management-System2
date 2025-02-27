@@ -1,12 +1,12 @@
 # Employee Management System
 
-This is a full-stack Employee Management System built using Django (Backend) and Vue.js (Frontend). It provides role-based access control but admin is implemented only, and RESTful APIs for efficient employee management.
+This is a full-stack Employee Management System built using Django (Backend) and Vue.js (Frontend). It provides role-based access control, with the admin role fully implemented, and RESTful APIs for efficient employee management. The employee role is currently under development.
 
 ## Features
 
 * **User Management:**
     * Authentication (login/logout).
-    * Role-based access control (Admin, Employee - Employee under development).
+    * Role-based access control (Admin - fully implemented, Employee - under development).
 * **Company Module:**
     * Create and manage company records.
 * **Department Module:**
@@ -17,11 +17,6 @@ This is a full-stack Employee Management System built using Django (Backend) and
     * Fully functional API for frontend interaction.
 * **Security:**
     * JWT authentication with access tokens.
-* **API Documentation:**
-    * Auto-generated API documentation (e.g., using Swagger or Redoc).
-* **Testing & Logging:**
-    * Unit tests for backend.
-    * Logging for debugging.
 
 ## Tech Stack
 
@@ -30,7 +25,7 @@ This is a full-stack Employee Management System built using Django (Backend) and
 * Django
 * Django REST Framework (DRF)
 * Django ORM
-* PostgreSQL / SQLite (Database)
+* SQLite (Database)
 * JWT Authentication with access tokens
 * Role-based access control
 
@@ -47,7 +42,7 @@ This is a full-stack Employee Management System built using Django (Backend) and
 
 * Python (3.7+)
 * Node.js (12+)
-* PostgreSQL or SQLite
+* SQLite
 
 ### Backend Setup (Django)
 
@@ -63,13 +58,17 @@ This is a full-stack Employee Management System built using Django (Backend) and
     ```bash
     python -m venv venv
     source venv/bin/activate  # On macOS/Linux
-    venv\Scripts\activate      # On Windows
+    venv\Scripts\activate      # On Windows cmd
+    venv\Scripts\Activate.ps1 # On windows powershell
     ```
 
-3.  **Install dependencies:**
+3.  **Install Django and related packages:**
 
     ```bash
-    pip install -r requirements.txt
+    pip install django
+    pip install djangorestframework
+    pip install django-cors-headers
+    pip install djangorestframework-simplejwt
     ```
 
 4.  **Configure database settings:**
@@ -79,6 +78,8 @@ This is a full-stack Employee Management System built using Django (Backend) and
 5.  **Run migrations:**
 
     ```bash
+    cd <backend-directory>
+    python manage.py makemigrations
     python manage.py migrate
     ```
 
@@ -116,26 +117,13 @@ This is a full-stack Employee Management System built using Django (Backend) and
 
 ### API Endpoints
 
-Once the backend server is running, you can access the following API endpoints:
+Once the backend server is running and you are authenticated, you can access the following API endpoints:
 
 * **Users:** `http://127.0.0.1:8000/api/users/`
 * **Companies:** `http://127.0.0.1:8000/api/companies/`
 * **Departments:** `http://127.0.0.1:8000/api/departments/`
 * **Employees:** `http://127.0.0.1:8000/api/employees/`
 
-### API Documentation
-
-* Access the auto-generated API documentation at `http://127.0.0.1:8000/api/docs/` (or similar, depending on your setup).
-
-### Testing
-
-* **Backend Tests:**
-    * `python manage.py test`
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request.
-
-## License
-
-[MIT License or your desired license]
